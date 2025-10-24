@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8">
+<title>Raditya Yusuf (5025231033) dan Rahman Azkarafi (502523104)</title>
+<style>
+    body {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        margin: 0;
+        padding: 20px;
+        background-color: #f5f5f5;
+        color: #333;
+        line-height: 1.6;
+    }
+    
+    h1 {
+        text-align: center;
+        color: #2c3e50;
+        margin-bottom: 20px;
+        font-size: 28px;
+    }
+    
+    /* Container untuk foto objek */
+    .photo-container {
+        max-width: 840px;
+        margin: 0 auto 25px;
+        background-color: white;
+        border-radius: 8px;
+        padding: 25px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    }
+    
+    .photo-container h2 {
+        text-align: center;
+        color: #2c3e50;
+        margin-bottom: 15px;
+        font-size: 24px;
+        border-bottom: 2px solid #3498db;
+        padding-bottom: 10px;
+    }
+    
+    .photo-description {
+        text-align: center;
+        margin-bottom: 20px;
+        color: #7f8c8d;
+        font-size: 16px;
+        line-height: 1.5;
+    }
+    
+    .photo-wrapper {
+        display: flex;
+        justify-content: center;
+        margin-top: 15px;
+    }
+    
+    .photo-item {
+        max-width: 600px;
+        text-align: center;
+    }
+    
+    .photo-item img {
+        width: 100%;
+        height: auto;
+        border-radius: 6px;
+        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    }
+    
+    .photo-caption {
+        margin-top: 10px;
+        font-style: italic;
+        color: #7f8c8d;
+        font-size: 14px;
+    }
+    
+    .canvas-container {
+        display: flex;
+        justify-content: center;
+        margin-bottom: 25px;
+    }
+    
+    #gl-canvas {
+        border: 2px solid #34495e;
+        border-radius: 4px;
+        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        background-color: #fff;
+    }
+    
+    .controls-container {
+        max-width: 840px;
+        margin: 0 auto;
+        background-color: white;
+        border-radius: 8px;
+        padding: 25px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    }
+    
+    .control-group {
+        margin-bottom: 25px;
+        padding: 20px;
+        border: 1px solid #e0e0e0;
+        border-radius: 6px;
+        background-color: #fafafa;
+    }
+    
+    .control-group h3 {
+        margin-top: 0;
+        color: #2c3e50;
+        border-bottom: 1px solid #e0e0e0;
+        padding-bottom: 10px;
+        font-size: 1.3em;
+        margin-bottom: 15px;
+    }
+    
+    .control-row {
+        display: flex;
+        align-items: center;
+        margin: 15px 0;
+    }
+    
+    .control-label {
+        width: 100px;
+        font-weight: 500;
+        font-size: 16px;
+    }
+    
+    .slider-container {
+        flex: 1;
+        margin: 0 15px;
+    }
+    
+    input[type="range"] {
+        width: 100%;
+        height: 8px;
+        border-radius: 4px;
+        background: #dcdcdc;
+        outline: none;
+        -webkit-appearance: none;
+    }
+    
+    input[type="range"]::-webkit-slider-thumb {
+        -webkit-appearance: none;
+        width: 20px;
+        height: 20px;
+        border-radius: 50%;
+        background: #3498db;
+        cursor: pointer;
+        border: 2px solid #fff;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    }
+    
+    input[type="range"]::-moz-range-thumb {
+        width: 20px;
+        height: 20px;
+        border-radius: 50%;
+        background: #3498db;
+        cursor: pointer;
+        border: 2px solid #fff;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    }
+    
+    .value-display {
+        width: 60px;
+        text-align: center;
+        font-weight: bold;
+        color: #2c3e50;
+        font-size: 16px;
+        background: #ecf0f1;
+        padding: 5px 10px;
+        border-radius: 4px;
+    }
+    
+    .button-container {
+        display: flex;
+        justify-content: center;
+        gap: 15px;
+        margin-top: 25px;
+        flex-wrap: wrap;
+    }
+    
+    button {
+        padding: 12px 24px;
+        border: none;
+        border-radius: 4px;
+        background-color: #3498db;
+        color: white;
+        font-size: 16px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        font-weight: 500;
+        min-width: 120px;
+    }
+    
+    button:hover {
+        background-color: #2980b9;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    }
+    
+    #reset {
+        background-color: #e74c3c;
+    }
+    
+    #reset:hover {
+        background-color: #c0392b;
+    }
+    
+    #autoRotate {
+        background-color: #2ecc71;
+    }
+    
+    #autoRotate:hover {
+        background-color: #27ae60;
+    }
+    
+    .auto-rotate-hint {
+        text-align: center;
+        margin-top: 15px;
+        font-style: italic;
+        color: #7f8c8d;
+        font-size: 14px;
+        padding: 10px;
+        background-color: #f8f9fa;
+        border-radius: 4px;
+    }
+    
+    .scale-range {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 8px;
+        font-size: 13px;
+        color: #7f8c8d;
+        padding: 0 5px;
+    }
+    input[type="checkbox"] {
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+}
+    
+    @media (max-width: 900px) {
+        .controls-container {
+            padding: 15px;
+        }
+        
+        .control-row {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+        
+        .control-label {
+            width: 100%;
+            margin-bottom: 8px;
+        }
+        
+        .slider-container {
+            width: 100%;
+            margin: 8px 0;
+        }
+        
+        .value-display {
+            align-self: flex-end;
+            margin-top: 8px;
+        }
+        
+        .button-container {
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        button {
+            width: 100%;
+            max-width: 300px;
+        }
+    }
+</style>
+</head>
+
+<body>
+    <h1>Raditya Yusuf (5025231033) dan Rahman Azkarafi (5025231044)</h1>
+    
+    <!-- Container untuk foto objek asli -->
+    <div class="photo-container">
+        <h2>Foto dan Video Objek Asli</h2>
+        <div class="photo-description">
+            Berikut adalah foto dan video objek asli yang akan digambarkan dalam aplikasi grafika ini.
+            Objek ini berada di lingkungan Teknik Informatika.
+        </div>
+        
+        <div class="photo-wrapper">
+            <div class="photo-item">
+                <img id="object-photo" src="public/20250922_160644.jpg" alt="Foto objek asli">
+                <img id="object-photo2" src="public/20250922_160708.jpg" alt="Foto objek asli">
+                <div class="photo-caption">Foto objek asli di lingkungan Teknik Informatika</div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="canvas-container">
+        <canvas id="gl-canvas" width="840" height="840">
+            Browser Anda tidak mendukung elemen canvas HTML5.
+        </canvas>
+    </div>
+
+<script id="vertex-shader" type="x-shader/x-vertex">
+    #version 300 es
+    in vec4 vPosition;
+    in vec4 vColor;
+    out vec4 fColor;
+    uniform mat4 modelViewMatrix;
+    void main(){
+        gl_Position = modelViewMatrix * vPosition;
+        fColor = vColor;
+    }
+</script>
+
+<script id="fragment-shader" type="x-shader/x-fragment">
+    #version 300 es
+    precision mediump float;
+    in vec4 fColor;
+    out vec4 fragColor;
+    void main(){
+        fragColor = fColor;
+    }
+</script>
+
+<div class="controls-container">
+    <div class="control-group">
+        <div class="button-container">
+            <button onclick="rotateLeft()">Rotate Left</button>
+            <button onclick="rotateRight()">Rotate Right</button>
+            <button onclick="resetRotation()">Reset Rotation</button>
+        </div>
+    </div>
+</div>
+
+<script src="initShaders.js"></script>
+<script src="MVnew.js"></script>
+<script src="tugas-02.js"></script>
+
+</body>
+</html>
