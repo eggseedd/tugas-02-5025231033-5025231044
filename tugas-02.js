@@ -158,10 +158,10 @@ function buildWallAndDoor() {
   quad(38, 39, 36, 37, gray); // back
 
   // Right door frame (gray)
-  quad(6, 9, 12, 7, gray); // front
-  quad(40, 6, 7, 41, gray); // left side
-  quad(12, 42, 41, 9, gray); // top
-  quad(42, 43, 40, 41, gray); // back
+  quad(6, 9, 13, 7, gray);        // front
+  quad(40, 6, 7, 43, gray);       // outer side
+  quad(9, 41, 42, 13, gray);      // inner side
+  quad(41, 40, 43, 42, gray);     // back
 
   // Middle upper door frame (gray)
   quad(14, 16, 17, 15, gray); // front
