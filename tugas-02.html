@@ -2,7 +2,7 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8">
-<title>Raditya Yusuf (5025231033) dan Rahman Azkarafi (5025231044)</title>
+<title>Raditya Yusuf (5025231033) dan Rahman Azkarafi (502523104)</title>
 <style>
     body {
         font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -20,6 +20,7 @@
         font-size: 28px;
     }
     
+    /* Container untuk foto objek */
     .photo-container {
         max-width: 840px;
         margin: 0 auto 25px;
@@ -62,7 +63,6 @@
         height: auto;
         border-radius: 6px;
         box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-        margin-bottom: 10px;
     }
     
     .photo-caption {
@@ -111,6 +111,64 @@
         margin-bottom: 15px;
     }
     
+    .control-row {
+        display: flex;
+        align-items: center;
+        margin: 15px 0;
+    }
+    
+    .control-label {
+        width: 100px;
+        font-weight: 500;
+        font-size: 16px;
+    }
+    
+    .slider-container {
+        flex: 1;
+        margin: 0 15px;
+    }
+    
+    input[type="range"] {
+        width: 100%;
+        height: 8px;
+        border-radius: 4px;
+        background: #dcdcdc;
+        outline: none;
+        -webkit-appearance: none;
+    }
+    
+    input[type="range"]::-webkit-slider-thumb {
+        -webkit-appearance: none;
+        width: 20px;
+        height: 20px;
+        border-radius: 50%;
+        background: #3498db;
+        cursor: pointer;
+        border: 2px solid #fff;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    }
+    
+    input[type="range"]::-moz-range-thumb {
+        width: 20px;
+        height: 20px;
+        border-radius: 50%;
+        background: #3498db;
+        cursor: pointer;
+        border: 2px solid #fff;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    }
+    
+    .value-display {
+        width: 60px;
+        text-align: center;
+        font-weight: bold;
+        color: #2c3e50;
+        font-size: 16px;
+        background: #ecf0f1;
+        padding: 5px 10px;
+        border-radius: 4px;
+    }
+    
     .button-container {
         display: flex;
         justify-content: center;
@@ -138,47 +196,70 @@
         box-shadow: 0 4px 8px rgba(0,0,0,0.1);
     }
     
-    .door-controls {
-        display: flex;
-        gap: 10px;
-        margin-top: 10px;
-        flex-wrap: wrap;
-        justify-content: center;
-    }
-    
-    .door-btn {
-        padding: 8px 16px;
-        font-size: 14px;
-        min-width: 100px;
-    }
-    
-    .reset-btn {
+    #reset {
         background-color: #e74c3c;
     }
     
-    .reset-btn:hover {
+    #reset:hover {
         background-color: #c0392b;
     }
     
-    .wall-move-btn {
-        background-color: #9b59b6;
+    #autoRotate {
+        background-color: #2ecc71;
     }
     
-    .wall-move-btn:hover {
-        background-color: #8e44ad;
+    #autoRotate:hover {
+        background-color: #27ae60;
     }
     
-    .reset-all-btn {
-        background-color: #e67e22;
+    .auto-rotate-hint {
+        text-align: center;
+        margin-top: 15px;
+        font-style: italic;
+        color: #7f8c8d;
+        font-size: 14px;
+        padding: 10px;
+        background-color: #f8f9fa;
+        border-radius: 4px;
     }
     
-    .reset-all-btn:hover {
-        background-color: #d35400;
+    .scale-range {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 8px;
+        font-size: 13px;
+        color: #7f8c8d;
+        padding: 0 5px;
     }
+    input[type="checkbox"] {
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+}
     
     @media (max-width: 900px) {
         .controls-container {
             padding: 15px;
+        }
+        
+        .control-row {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+        
+        .control-label {
+            width: 100%;
+            margin-bottom: 8px;
+        }
+        
+        .slider-container {
+            width: 100%;
+            margin: 8px 0;
+        }
+        
+        .value-display {
+            align-self: flex-end;
+            margin-top: 8px;
         }
         
         .button-container {
@@ -189,10 +270,6 @@
         button {
             width: 100%;
             max-width: 300px;
-        }
-        
-        .door-controls {
-            flex-direction: column;
         }
     }
 </style>
@@ -251,34 +328,58 @@
         <div class="button-container">
             <button onclick="rotateLeft()">Rotate Left</button>
             <button onclick="rotateRight()">Rotate Right</button>
-            <button onclick="resetRotation()" class="reset-btn">Reset Rotation</button>
+            <button onclick="resetRotation()">Reset Rotation</button>
         </div>
     </div>
     
     <div class="control-group">
-        <h3>Geser Tembok (Kiri-Kanan)</h3>
-        <div class="button-container">
-            <button onclick="moveWallLeft()" class="wall-move-btn">Geser Kiri</button>
-            <button onclick="moveWallRight()" class="wall-move-btn">Geser Kanan</button>
-            <button onclick="resetWallPosition()" class="reset-btn">Reset Posisi</button>
+        <h3>Posisi Objek (Translasi)</h3>
+        <div class="axis-controls">
+            <div class="axis-row">
+                <div class="axis-label">Sumbu X:</div>
+                <div class="translation-controls">
+                    <button class="translation-btn" onclick="moveLeft()">Kiri</button>
+                    <button class="translation-btn" onclick="moveRight()">Kanan</button>
+                </div>
+            </div>
+            <div class="axis-row">
+                <div class="axis-label">Sumbu Y:</div>
+                <div class="translation-controls">
+                    <button class="translation-btn" onclick="moveUp()">Atas</button>
+                    <button class="translation-btn" onclick="moveDown()">Bawah</button>
+                </div>
+            </div>
+            <div class="axis-row">
+                <div class="axis-label">Sumbu Z:</div>
+                <div class="translation-controls">
+                    <button class="translation-btn" onclick="moveForward()">Depan</button>
+                    <button class="translation-btn" onclick="moveBackward()">Belakang</button>
+                </div>
+            </div>
+        </div>
+        <div class="button-container" style="margin-top: 15px;">
+            <button onclick="resetPosition()">Reset Posisi</button>
         </div>
     </div>
     
     <div class="control-group">
         <h3>Animasi Pintu</h3>
-        <div class="door-controls">
-            <button class="door-btn" onclick="openLeftDoor()">Buka Kiri</button>
-            <button class="door-btn" onclick="closeLeftDoor()">Tutup Kiri</button>
-            <button class="door-btn" onclick="openRightDoor()">Buka Kanan</button>
-            <button class="door-btn" onclick="closeRightDoor()">Tutup Kanan</button>
-            <button class="door-btn reset-btn" onclick="resetDoors()">Reset Pintu</button>
+        <div class="control-row">
+            <div class="control-label">Buka/Tutup Pintu:</div>
+            <div class="door-controls">
+                <button class="door-btn" onclick="openLeftDoor()">Buka Kiri</button>
+                <button class="door-btn" onclick="closeLeftDoor()">Tutup Kiri</button>
+                <button class="door-btn" onclick="openRightDoor()">Buka Kanan</button>
+                <button class="door-btn" onclick="closeRightDoor()">Tutup Kanan</button>
+                <button class="door-btn" onclick="resetDoors()">Reset Pintu</button>
+            </div>
         </div>
     </div>
     
     <div class="control-group">
         <h3>Reset Semua</h3>
         <div class="button-container">
-            <button onclick="resetAll()" class="reset-all-btn">Reset Semua</button>
+            <button onclick="resetAll()" style="background-color: #e74c3c;">Reset Semua (Posisi + Rotasi + Pintu)</button>
         </div>
     </div>
 </div>

@@ -11,14 +11,14 @@ const cyan  = vec4(0.0, 1.0, 1.0, 1.0);
 const brown = vec4(0.65, 0.5, 0.4, 1.0);
 
 const vertices = [
-  // --- Wall 1–10 ---
+  // --- Wall ---
   // Left wall
   vec3(-0.72,  0.64, 0.0), // 0
   vec3(-0.48,  0.64, 0.0), // 1
   vec3(-0.72, -0.64, 0.0), // 2
   vec3(-0.48, -0.64, 0.0), // 3
 
-  // Right wall (gap = 0.96)
+  // Right wall
   vec3( 0.48,  0.64, 0.0), // 4
   vec3( 0.72,  0.64, 0.0), // 5
   vec3( 0.48, -0.64, 0.0), // 6
@@ -28,7 +28,7 @@ const vertices = [
   vec3(-0.48, 0.4, 0.0), // 8
   vec3( 0.48, 0.4, 0.0), // 9
 
-  // --- Door frame 11-14 ---
+  // --- Door frame ---
   // Left door frame
   vec3(-0.42, 0.4, 0), // 10
   vec3(-0.42, -0.64, 0), // 11
@@ -55,51 +55,51 @@ const vertices = [
   vec3( 0.42, -0.64, 0), // 24
   vec3( 0.005, -0.64, 0), // 25
 
-  // 3D left wall
-  vec3(-0.72,  0.64, 0.24), // 26
-  vec3(-0.48,  0.64, 0.24), // 27
-  vec3(-0.72, -0.64, 0.24), // 28
-  vec3(-0.48, -0.64, 0.24), // 29
+  // 3D left wall - moved further back to avoid z-fighting
+  vec3(-0.72,  0.64, 0.25), // 26
+  vec3(-0.48,  0.64, 0.25), // 27
+  vec3(-0.72, -0.64, 0.25), // 28
+  vec3(-0.48, -0.64, 0.25), // 29
 
-  // 3D right wall
-  vec3( 0.48,  0.64, 0.24), // 30
-  vec3( 0.72,  0.64, 0.24), // 31
-  vec3( 0.48, -0.64, 0.24), // 32
-  vec3( 0.72, -0.64, 0.24), // 33
+  // 3D right wall - moved further back
+  vec3( 0.48,  0.64, 0.25), // 30
+  vec3( 0.72,  0.64, 0.25), // 31
+  vec3( 0.48, -0.64, 0.25), // 32
+  vec3( 0.72, -0.64, 0.25), // 33
 
-  // 3D middle upper wall
-  vec3(-0.48, 0.4, 0.24), // 34
-  vec3( 0.48, 0.4, 0.24), // 35
+  // 3D middle upper wall - moved further back
+  vec3(-0.48, 0.4, 0.25), // 34
+  vec3( 0.48, 0.4, 0.25), // 35
 
-  // 3D left door frame
-  vec3(-0.48, -0.64, 0.06), // 36
-  vec3(-0.48, 0.4, 0.06), // 37
-  vec3(-0.42, 0.4, 0.06), // 38
-  vec3(-0.42, -0.64, 0.06), // 39
+  // 3D left door frame - increased gap
+  vec3(-0.48, -0.64, 0.08), // 36
+  vec3(-0.48, 0.4, 0.08), // 37
+  vec3(-0.42, 0.4, 0.08), // 38
+  vec3(-0.42, -0.64, 0.08), // 39
 
-  // 3D right door frame
-  vec3( 0.48, -0.64, 0.06), // 40
-  vec3( 0.48, 0.4, 0.06), // 41  
-  vec3( 0.42, 0.4, 0.06), // 42
-  vec3( 0.42, -0.64, 0.06), // 43
+  // 3D right door frame - increased gap
+  vec3( 0.48, -0.64, 0.08), // 40
+  vec3( 0.48, 0.4, 0.08), // 41  
+  vec3( 0.42, 0.4, 0.08), // 42
+  vec3( 0.42, -0.64, 0.08), // 43
 
-  // 3D middle upper door frame
-  vec3(-0.418, 0.4, 0.06), // 44
-  vec3(-0.418, 0.34, 0.06), // 45
-  vec3( 0.418, 0.4, 0.06), // 46
-  vec3( 0.418, 0.34, 0.06), // 47
+  // 3D middle upper door frame - increased gap
+  vec3(-0.418, 0.4, 0.08), // 44
+  vec3(-0.418, 0.34, 0.08), // 45
+  vec3( 0.418, 0.4, 0.08), // 46
+  vec3( 0.418, 0.34, 0.08), // 47
 
-  // 3D Left door
-  vec3(-0.42, 0.34, 0.03), // 48
-  vec3(-0.005, 0.34, 0.03), // 49
-  vec3(-0.42, -0.64, 0.03), // 50
-  vec3(-0.005, -0.64, 0.03), // 51
+  // 3D Left door - increased thickness
+  vec3(-0.42, 0.34, 0.05), // 48
+  vec3(-0.005, 0.34, 0.05), // 49
+  vec3(-0.42, -0.64, 0.05), // 50
+  vec3(-0.005, -0.64, 0.05), // 51
 
-  // 3D Right door
-  vec3( 0.42, 0.34, 0.03), // 52
-  vec3( 0.005, 0.34, 0.03), // 53
-  vec3( 0.42, -0.64, 0.03), // 54
-  vec3( 0.005, -0.64, 0.03), // 55
+  // 3D Right door - increased thickness
+  vec3( 0.42, 0.34, 0.05), // 52
+  vec3( 0.005, 0.34, 0.05), // 53
+  vec3( 0.42, -0.64, 0.05), // 54
+  vec3( 0.005, -0.64, 0.05), // 55
 ];
 
 function quad(a, b, c, d, color) {
@@ -117,6 +117,11 @@ let leftDoorAngle = 0;
 let rightDoorAngle = 0;
 let wallStart, frameStart, leftDoorStart, rightDoorStart;
 let wallCount, frameCount, leftDoorCount, rightDoorCount;
+
+// NEW: Translation variables
+let translateX = 0;
+let translateY = 0;
+let translateZ = 0;
 
 function buildWallAndDoor() {
   // compute starts and counts dynamically
@@ -201,24 +206,29 @@ function createNode(transform, render, sibling, child){
 }
 
 function initNodes(){
-  const wallTransform  = rotateY(theta);
+  // NEW: Combine translation and rotation for wall
+  const wallTransform = mult(
+    translate(translateX, translateY, translateZ),
+    rotateY(theta)
+  );
+  
   const frameTransform = mat4();
   
-  // Left door rotates around its left edge
+  // Left door rotation (local transformation)
   const leftDoorTransform = mult(
-    translate(-0.42, 0, 0.03),
+    translate(-0.42, 0, 0.05),
     mult(
       rotateY(leftDoorAngle),
-      translate(0.42, 0, -0.03)
+      translate(0.42, 0, -0.05)
     )
   );
   
-  // Right door rotates around its right edge  
+  // Right door rotation (local transformation)  
   const rightDoorTransform = mult(
-    translate(0.42, 0, 0.03),
+    translate(0.42, 0, 0.05),
     mult(
       rotateY(rightDoorAngle),
-      translate(-0.42, 0, -0.03)
+      translate(-0.42, 0, -0.05)
     )
   );
 
@@ -259,6 +269,10 @@ window.onload = function init(){
   gl.viewport(0, 0, canvas.width, canvas.height);
   gl.clearColor(0.2, 0.2, 0.2, 1.0);
   gl.enable(gl.DEPTH_TEST);
+  
+  // Improved depth testing to reduce z-fighting
+  gl.depthFunc(gl.LEQUAL);
+  gl.clearDepth(1.0);
 
   const program = initShaders(gl, "vertex-shader", "fragment-shader");
   gl.useProgram(program);
@@ -294,9 +308,23 @@ function rotateLeft(){ theta -= 10; render(); }
 function rotateRight(){ theta += 10; render(); }
 function resetRotation(){ theta = 0; render(); }
 
-// Door animation controls
+// NEW: Translation controls
+function moveLeft(){ translateX -= 0.1; render(); }
+function moveRight(){ translateX += 0.1; render(); }
+function moveUp(){ translateY += 0.1; render(); }
+function moveDown(){ translateY -= 0.1; render(); }
+function moveForward(){ translateZ += 0.1; render(); }
+function moveBackward(){ translateZ -= 0.1; render(); }
+function resetPosition(){ 
+  translateX = 0; 
+  translateY = 0; 
+  translateZ = 0; 
+  render(); 
+}
+
+// Door animation controls - pintu membuka ke dalam
 function openLeftDoor(){ 
-  leftDoorAngle = -90; 
+  leftDoorAngle = 90;
   render(); 
 }
 
@@ -306,7 +334,7 @@ function closeLeftDoor(){
 }
 
 function openRightDoor(){ 
-  rightDoorAngle = 90; 
+  rightDoorAngle = -90;
   render(); 
 }
 
@@ -319,4 +347,15 @@ function resetDoors(){
   leftDoorAngle = 0; 
   rightDoorAngle = 0; 
   render(); 
+}
+
+// NEW: Reset everything
+function resetAll(){
+  theta = 0;
+  leftDoorAngle = 0;
+  rightDoorAngle = 0;
+  translateX = 0;
+  translateY = 0;
+  translateZ = 0;
+  render();
 }
