@@ -202,9 +202,9 @@ function initNodes(){
 
   // Left door rotation (local transformation)
 const leftDoorTransform = mult(
-  translate(0.08 * (leftDoorAngle / 90), 0, -0.03 * (leftDoorAngle / 90)), // right shift grows as door opens
+  translate(0.08 * (leftDoorAngle / 90), 0, -0.06 * (leftDoorAngle / 90)), // right shift grows as door opens
   mult(
-    translate(-0.42, 0, 0.08),
+    translate(-0.42, 0, 0.11),
     mult(
       rotateY(leftDoorAngle),
       translate(0.42, 0, -0.08)
@@ -214,9 +214,9 @@ const leftDoorTransform = mult(
   
   // Right door rotation (local transformation)  
 const rightDoorTransform = mult(
-  translate(0.08 * (rightDoorAngle / 90), 0, 0.03 * (rightDoorAngle / 90)), // shift left as it opens
+  translate(0.08 * (rightDoorAngle / 90), 0, 0.06 * (rightDoorAngle / 90)), // shift left as it opens
   mult(
-    translate(0.42, 0, 0.08),                     // hinge position
+    translate(0.42, 0, 0.11),                     // hinge position
     mult(
       rotateY(rightDoorAngle),
       translate(-0.42, 0, -0.08)
