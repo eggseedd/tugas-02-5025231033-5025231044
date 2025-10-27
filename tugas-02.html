@@ -236,6 +236,13 @@
     height: 20px;
     cursor: pointer;
 }
+#toggleAnimation {
+    background-color: #e74c3c;
+}
+
+#toggleAnimation:hover {
+    background-color: #c0392b;
+}
     
     @media (max-width: 900px) {
         .controls-container {
@@ -349,6 +356,18 @@ void main() {
 </script>
 
 <div class="controls-container">
+    <div class="control-group">
+    <h3>Kontrol Animasi Otomatis</h3>
+    <div class="button-container">
+        <button id="toggleAnimation" onclick="toggleAnimation()">Stop Animation</button>
+        <button onclick="resetAnimation()">Reset Animation</button>
+        <button onclick="rotationSpeed = Math.max(0.1, rotationSpeed - 0.2)">Perlambat</button>
+        <button onclick="rotationSpeed = Math.min(3, rotationSpeed + 0.2)">Percepat</button>
+    </div>
+    <div class="auto-rotate-hint">
+        Animasi otomatis berjalan secara default. Klik "Stop Animation" untuk menghentikan.
+    </div>
+</div>
     <div class="control-group">
         <h3>Rotasi Seluruh Objek</h3>
         <div class="button-container">

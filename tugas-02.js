@@ -7,6 +7,13 @@ let normalsArray = [];
 
 let shaderProgram;
 
+// animasi defaulty
+let isAnimating = true;
+let animationId = null;
+let rotationSpeed = 0.2; 
+let doorAnimationPhase = 0; // 0: menutup, 1: membuka, 2: menutup lagi
+let doorAnimationCounter = 0;
+
 // const gray = vec4(0.8, 0.8, 0.8, 1.0);
 // const white = vec4(1.0, 1.0, 1.0, 1.0);
 // const cyan  = vec4(0.0, 0.0, 0.0, 1.0);
@@ -280,6 +287,69 @@ function traverse(node){
   if(node.sibling) traverse(node.sibling);
 }
 
+function animate() {
+    if (!isAnimating) return;
+    
+    // Rotasi tembok terus menerus
+    theta += rotationSpeed;
+    if (theta >= 360) theta -= 360;
+    
+    // Animasi pintu buka tutup
+    doorAnimationCounter++;
+    if (doorAnimationCounter >= 60) { // Ganti fase setiap 60 frame
+        doorAnimationCounter = 0;
+        doorAnimationPhase = (doorAnimationPhase + 1) % 3;
+    }
+    
+    // Kontrol buka/tutup pintu berdasarkan fase
+    if (doorAnimationPhase === 1) {
+        // Fase membuka
+        if (leftDoorAngle < 90) leftDoorAngle += 2;
+        if (rightDoorAngle > -90) rightDoorAngle -= 2;
+    } else if (doorAnimationPhase === 2) {
+        // Fase menutup
+        if (leftDoorAngle > 0) leftDoorAngle -= 2;
+        if (rightDoorAngle < 0) rightDoorAngle += 2;
+    }
+    
+    render();
+    animationId = requestAnimationFrame(animate);
+}
+
+//mulai/stop animasi
+function toggleAnimation() {
+    isAnimating = !isAnimating;
+    
+    if (isAnimating) {
+        animate();
+        document.getElementById('toggleAnimation').textContent = 'Stop Animation';
+        document.getElementById('toggleAnimation').style.backgroundColor = '#e74c3c';
+    } else {
+        if (animationId) {
+            cancelAnimationFrame(animationId);
+            animationId = null;
+        }
+        document.getElementById('toggleAnimation').textContent = 'Start Animation';
+        document.getElementById('toggleAnimation').style.backgroundColor = '#2ecc71';
+    }
+}
+
+// Fungsi untuk mereset animasi ke state awal
+function resetAnimation() {
+    isAnimating = true;
+    theta = 0;
+    leftDoorAngle = 0;
+    rightDoorAngle = 0;
+    doorAnimationPhase = 0;
+    doorAnimationCounter = 0;
+    
+    if (!animationId) {
+        animate();
+    }
+    
+    document.getElementById('toggleAnimation').textContent = 'Stop Animation';
+    document.getElementById('toggleAnimation').style.backgroundColor = '#e74c3c';
+}
 function setMaterial(ambient, diffuse, specular) {
   // use cached uniform locations
   gl.uniform4fv(uMaterialAmbientLoc, flatten(ambient));
@@ -368,8 +438,12 @@ window.onload = function init(){
   gl.uniform4fv(uLightSpecularLoc, flatten(lightSpecular));
   gl.uniform1f(uShininessLoc, materialShininess);
 
-  modelViewMatrixLoc = gl.getUniformLocation(program, "modelViewMatrix");
+      setTimeout(() => {
+        animate();
+    }, 1000);
 
+  modelViewMatrixLoc = gl.getUniformLocation(program, "modelViewMatrix");
+  
   render();
 };
 
@@ -378,6 +452,9 @@ function render(){
   initNodes();
   modelViewMatrix = mat4();
   traverse(wallNode);
+      if (isAnimating && !animationId) {
+        animationId = requestAnimationFrame(animate);
+    }
 }
 
 // Rotation controls
