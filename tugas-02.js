@@ -7,9 +7,9 @@ let normalsArray = [];
 
 let shaderProgram;
 
-const gray = vec4(0.8, 0.8, 0.8, 1.0);
-const white = vec4(1.0, 1.0, 1.0, 1.0);
-const cyan  = vec4(0.0, 1.0, 1.0, 1.0);
+// const gray = vec4(0.8, 0.8, 0.8, 1.0);
+// const white = vec4(1.0, 1.0, 1.0, 1.0);
+// const cyan  = vec4(0.0, 0.0, 0.0, 1.0);
 
 const vertices = [
   // --- Wall ---
@@ -117,9 +117,9 @@ const grayFrameAmbient  = vec4(0.4, 0.4, 0.4, 1.0);
 const grayFrameDiffuse  = vec4(0.6, 0.6, 0.6, 1.0);
 const grayFrameSpecular = vec4(0.1, 0.1, 0.1, 1.0);
 
-const materialShininess = 10.0;
+const materialShininess = 50.0;
 
-function quad(a, b, c, d, color) {
+function quad(a, b, c, d) {
   // compute face normal (counter-clockwise order assumed)
   const t1 = subtract(vertices[b], vertices[a]);
   const t2 = subtract(vertices[c], vertices[a]);
@@ -129,7 +129,7 @@ function quad(a, b, c, d, color) {
   pointsArray.push(vertices[a], vertices[c], vertices[d]);
 
   for (let i = 0; i < 6; i++) {
-    colorsArray.push(color);
+    // colorsArray.push(color);
     normalsArray.push(normal);
   }
 }
@@ -157,20 +157,20 @@ function buildWallAndDoor() {
   const startWall = pointsArray.length;
 
   // Left wall (white)
-    quad(2, 3, 1, 0, white);  // left wall
-  quad(26, 2, 0, 24, white);
-  quad(3, 27, 25, 1, white);
-  quad(27, 26, 24, 25, white);
+    quad(2, 3, 1, 0);  // left wall
+  quad(26, 2, 0, 24);
+  quad(3, 27, 25, 1);
+  quad(27, 26, 24, 25);
 
-  quad(6, 7, 5, 4, white);  // right wall
-  quad(7, 31, 29, 5, white);
-  quad(30, 6, 4, 28, white);
-  quad(31, 30, 28, 29, white);
+  quad(6, 7, 5, 4);  // right wall
+  quad(7, 31, 29, 5);
+  quad(30, 6, 4, 28);
+  quad(31, 30, 28, 29);
 
-  quad(8, 9, 4, 1, white);  // middle upper wall
-  quad(25, 1, 4, 28, white);
-  quad(8, 32, 33, 9, white);
-  quad(33, 32, 25, 28, white);
+  quad(8, 9, 4, 1);  // middle upper wall
+  quad(25, 1, 4, 28);
+  quad(8, 32, 33, 9);
+  quad(33, 32, 25, 28);
 
   wallStart = startWall;
   wallCount = pointsArray.length - startWall;
@@ -178,17 +178,17 @@ function buildWallAndDoor() {
   // --- Frame ---
   const startFrame = pointsArray.length;
   
-  quad(3, 11, 10, 8, gray); // left door frame
-  quad(11, 37, 36, 10, gray);
-  quad(37, 34, 35, 36, gray);
+  quad(3, 11, 10, 8); // left door frame
+  quad(11, 37, 36, 10);
+  quad(37, 34, 35, 36);
 
-  quad(13, 6, 9, 12, gray); // right door frame
-  quad(41, 13, 12, 40, gray);
-  quad(38, 41, 40, 39, gray);
+  quad(13, 6, 9, 12); // right door frame
+  quad(41, 13, 12, 40);
+  quad(38, 41, 40, 39);
 
-  quad(15, 17, 16, 14, gray); // middle upper door frame
-  quad(43, 45, 17, 15, gray);
-  quad(45, 43, 42, 44, gray);
+  quad(15, 17, 16, 14); // middle upper door frame
+  quad(43, 45, 17, 15);
+  quad(45, 43, 42, 44);
 
   frameStart = startFrame;
   frameCount = pointsArray.length - startFrame;
@@ -197,10 +197,10 @@ function buildWallAndDoor() {
   const startLeftDoor = pointsArray.length;
   
   // Left door front (cyan)
-  quad(11, 19, 18, 20, cyan); // left door
-  quad(19, 48, 47, 18, cyan);
-  quad(18, 47, 49, 20, cyan);
-  quad(48, 46, 49, 47, cyan);
+  quad(11, 19, 18, 20); // left door
+  quad(19, 48, 47, 18);
+  quad(18, 47, 49, 20);
+  quad(48, 46, 49, 47);
 
   leftDoorStart = startLeftDoor;
   leftDoorCount = pointsArray.length - startLeftDoor;
@@ -208,10 +208,10 @@ function buildWallAndDoor() {
   // --- Right Door ---
   const startRightDoor = pointsArray.length;
   
-  quad(22, 13, 23, 21, cyan); // right door
-  quad(52, 22, 21, 51, cyan);
-  quad(51, 21, 23, 53, cyan);
-  quad(50, 52, 51, 53, cyan);
+  quad(22, 13, 23, 21); // right door
+  quad(52, 22, 21, 51);
+  quad(51, 21, 23, 53);
+  quad(50, 52, 51, 53);
 
   rightDoorStart = startRightDoor;
   rightDoorCount = pointsArray.length - startRightDoor;
@@ -335,12 +335,12 @@ window.onload = function init(){
   gl.enableVertexAttribArray(vPosition);
 
   // color buffer
-  const cBuffer = gl.createBuffer();
-  gl.bindBuffer(gl.ARRAY_BUFFER, cBuffer);
-  gl.bufferData(gl.ARRAY_BUFFER, flatten(colorsArray), gl.STATIC_DRAW);
-  const vColor = gl.getAttribLocation(program, "vColor");
-  gl.vertexAttribPointer(vColor, 4, gl.FLOAT, false, 0, 0);
-  gl.enableVertexAttribArray(vColor);
+    // const cBuffer = gl.createBuffer();
+    // gl.bindBuffer(gl.ARRAY_BUFFER, cBuffer);
+    // gl.bufferData(gl.ARRAY_BUFFER, flatten(colorsArray), gl.STATIC_DRAW);
+    // const vColor = gl.getAttribLocation(program, "vColor");
+    // gl.vertexAttribPointer(vColor, 4, gl.FLOAT, false, 0, 0);
+    // gl.enableVertexAttribArray(vColor);
 
   // normal buffer
   const nBuffer = gl.createBuffer();
