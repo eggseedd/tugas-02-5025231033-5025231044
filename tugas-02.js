@@ -3,12 +3,13 @@
 let canvas, gl;
 let pointsArray = [];
 let colorsArray = [];
+let normalsArray = [];
 
-const red =  vec4(1.0, 0.0, 0.0, 1.0);
+let shaderProgram;
+
 const gray = vec4(0.8, 0.8, 0.8, 1.0);
 const white = vec4(1.0, 1.0, 1.0, 1.0);
 const cyan  = vec4(0.0, 1.0, 1.0, 1.0);
-const brown = vec4(0.65, 0.5, 0.4, 1.0);
 
 const vertices = [
   // --- Wall ---
@@ -99,10 +100,38 @@ const vertices = [
   vec3( 0.42, 0.34, 0.03), // 54
 ];
 
+const lightPosition = vec4(1.0, 1.0, 1.0, 0.0);
+const lightAmbient = vec4(0.5, 0.5, 0.5, 1.0);
+const lightDiffuse = vec4(1.0, 1.0, 1.0, 1.0);
+const lightSpecular = vec4(0.6, 0.6, 0.6, 1.0);
+
+const whiteWallAmbient = vec4(1.0, 1.0, 1.0, 1.0);
+const whiteWallDiffuse = vec4(1.0, 1.0, 1.0, 1.0);
+const whiteWallSpecular = vec4(0.2, 0.2, 0.2, 1.0);
+
+const blueDoorAmbient  = vec4(0.3, 0.7, 0.8, 1.0);
+const blueDoorDiffuse  = vec4(0.4, 0.8, 0.9, 1.0);
+const blueDoorSpecular = vec4(0.15, 0.15, 0.2, 1.0);
+
+const grayFrameAmbient  = vec4(0.4, 0.4, 0.4, 1.0);
+const grayFrameDiffuse  = vec4(0.6, 0.6, 0.6, 1.0);
+const grayFrameSpecular = vec4(0.1, 0.1, 0.1, 1.0);
+
+const materialShininess = 10.0;
+
 function quad(a, b, c, d, color) {
+  // compute face normal (counter-clockwise order assumed)
+  const t1 = subtract(vertices[b], vertices[a]);
+  const t2 = subtract(vertices[c], vertices[a]);
+  const normal = normalize(cross(t1, t2));
+
   pointsArray.push(vertices[a], vertices[b], vertices[c]);
   pointsArray.push(vertices[a], vertices[c], vertices[d]);
-  for (let i = 0; i < 6; i++) colorsArray.push(color);
+
+  for (let i = 0; i < 6; i++) {
+    colorsArray.push(color);
+    normalsArray.push(normal);
+  }
 }
 
 // hierarchical variables
@@ -120,17 +149,20 @@ let translateX = 0;
 let translateY = 0;
 let translateZ = 0;
 
+let uLightPositionLoc, uLightAmbientLoc, uLightDiffuseLoc, uLightSpecularLoc, uShininessLoc;
+let uMaterialAmbientLoc, uMaterialDiffuseLoc, uMaterialSpecularLoc;
+
 function buildWallAndDoor() {
   // compute starts and counts dynamically
   const startWall = pointsArray.length;
 
   // Left wall (white)
-    quad(0, 1, 3, 2, white);  // left wall
+    quad(2, 3, 1, 0, white);  // left wall
   quad(26, 2, 0, 24, white);
   quad(3, 27, 25, 1, white);
   quad(27, 26, 24, 25, white);
 
-  quad(4, 5, 7, 6, white);  // right wall
+  quad(6, 7, 5, 4, white);  // right wall
   quad(7, 31, 29, 5, white);
   quad(30, 6, 4, 28, white);
   quad(31, 30, 28, 29, white);
@@ -138,6 +170,7 @@ function buildWallAndDoor() {
   quad(8, 9, 4, 1, white);  // middle upper wall
   quad(25, 1, 4, 28, white);
   quad(8, 32, 33, 9, white);
+  quad(33, 32, 25, 28, white);
 
   wallStart = startWall;
   wallCount = pointsArray.length - startWall;
@@ -247,29 +280,53 @@ function traverse(node){
   if(node.sibling) traverse(node.sibling);
 }
 
-function renderWall(){ gl.drawArrays(gl.TRIANGLES, wallStart, wallCount); }
-function renderFrame(){ gl.drawArrays(gl.TRIANGLES, frameStart, frameCount); }
-function renderLeftDoor(){ gl.drawArrays(gl.TRIANGLES, leftDoorStart, leftDoorCount); }
-function renderRightDoor(){ gl.drawArrays(gl.TRIANGLES, rightDoorStart, rightDoorCount); }
+function setMaterial(ambient, diffuse, specular) {
+  // use cached uniform locations
+  gl.uniform4fv(uMaterialAmbientLoc, flatten(ambient));
+  gl.uniform4fv(uMaterialDiffuseLoc, flatten(diffuse));
+  gl.uniform4fv(uMaterialSpecularLoc, flatten(specular));
+}
+
+function renderWall(){ 
+  setMaterial(whiteWallAmbient, whiteWallDiffuse, whiteWallSpecular);
+  gl.drawArrays(gl.TRIANGLES, wallStart, wallCount);
+}
+function renderFrame(){ 
+  setMaterial(grayFrameAmbient, grayFrameDiffuse, grayFrameSpecular);
+  gl.drawArrays(gl.TRIANGLES, frameStart, frameCount);
+}
+function renderLeftDoor(){ 
+  setMaterial(blueDoorAmbient, blueDoorDiffuse, blueDoorSpecular);
+  gl.drawArrays(gl.TRIANGLES, leftDoorStart, leftDoorCount);
+}
+function renderRightDoor(){ 
+  setMaterial(blueDoorAmbient, blueDoorDiffuse, blueDoorSpecular);
+  gl.drawArrays(gl.TRIANGLES, rightDoorStart, rightDoorCount);
+}
 
 window.onload = function init(){
   canvas = document.getElementById("gl-canvas");
   gl = canvas.getContext("webgl2");
-  if(!gl) alert("WebGL 2.0 isn't available");
+  if(!gl) { alert("WebGL 2.0 isn't available"); return; }
+
+  // Ensure arrays are empty before building geometry (defensive)
+  pointsArray.length = 0;
+  colorsArray.length = 0;
+  normalsArray.length = 0;
 
   buildWallAndDoor();
 
   gl.viewport(0, 0, canvas.width, canvas.height);
   gl.clearColor(0.2, 0.2, 0.2, 1.0);
   gl.enable(gl.DEPTH_TEST);
-  
-  // Improved depth testing to reduce z-fighting
   gl.depthFunc(gl.LEQUAL);
   gl.clearDepth(1.0);
 
   const program = initShaders(gl, "vertex-shader", "fragment-shader");
+  shaderProgram = program;
   gl.useProgram(program);
 
+  // position buffer
   const vBuffer = gl.createBuffer();
   gl.bindBuffer(gl.ARRAY_BUFFER, vBuffer);
   gl.bufferData(gl.ARRAY_BUFFER, flatten(pointsArray), gl.STATIC_DRAW);
@@ -277,12 +334,39 @@ window.onload = function init(){
   gl.vertexAttribPointer(vPosition, 3, gl.FLOAT, false, 0, 0);
   gl.enableVertexAttribArray(vPosition);
 
+  // color buffer
   const cBuffer = gl.createBuffer();
   gl.bindBuffer(gl.ARRAY_BUFFER, cBuffer);
   gl.bufferData(gl.ARRAY_BUFFER, flatten(colorsArray), gl.STATIC_DRAW);
   const vColor = gl.getAttribLocation(program, "vColor");
   gl.vertexAttribPointer(vColor, 4, gl.FLOAT, false, 0, 0);
   gl.enableVertexAttribArray(vColor);
+
+  // normal buffer
+  const nBuffer = gl.createBuffer();
+  gl.bindBuffer(gl.ARRAY_BUFFER, nBuffer);
+  gl.bufferData(gl.ARRAY_BUFFER, flatten(normalsArray), gl.STATIC_DRAW);
+  const vNormal = gl.getAttribLocation(program, "vNormal");
+  gl.vertexAttribPointer(vNormal, 3, gl.FLOAT, false, 0, 0);
+  gl.enableVertexAttribArray(vNormal);
+
+  // cache uniform locations
+  uLightPositionLoc = gl.getUniformLocation(program, "lightPosition");
+  uLightAmbientLoc = gl.getUniformLocation(program, "lightAmbient");
+  uLightDiffuseLoc = gl.getUniformLocation(program, "lightDiffuse");
+  uLightSpecularLoc = gl.getUniformLocation(program, "lightSpecular");
+  uShininessLoc = gl.getUniformLocation(program, "shininess");
+
+  uMaterialAmbientLoc = gl.getUniformLocation(program, "materialAmbient");
+  uMaterialDiffuseLoc = gl.getUniformLocation(program, "materialDiffuse");
+  uMaterialSpecularLoc = gl.getUniformLocation(program, "materialSpecular");
+
+  // set light uniforms (once)
+  gl.uniform4fv(uLightPositionLoc, flatten(lightPosition));
+  gl.uniform4fv(uLightAmbientLoc, flatten(lightAmbient));
+  gl.uniform4fv(uLightDiffuseLoc, flatten(lightDiffuse));
+  gl.uniform4fv(uLightSpecularLoc, flatten(lightSpecular));
+  gl.uniform1f(uShininessLoc, materialShininess);
 
   modelViewMatrixLoc = gl.getUniformLocation(program, "modelViewMatrix");
 

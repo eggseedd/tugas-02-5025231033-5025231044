@@ -301,25 +301,51 @@
     </div>
 
 <script id="vertex-shader" type="x-shader/x-vertex">
-    #version 300 es
-    in vec4 vPosition;
-    in vec4 vColor;
-    out vec4 fColor;
-    uniform mat4 modelViewMatrix;
-    void main(){
-        gl_Position = modelViewMatrix * vPosition;
-        fColor = vColor;
-    }
+#version 300 es
+in vec4 vPosition;
+in vec3 vNormal;
+in vec4 vColor;
+
+out vec3 N, L, E;
+out vec4 color;
+
+uniform mat4 modelViewMatrix;
+uniform vec4 lightPosition;
+
+void main() {
+    vec3 pos = (modelViewMatrix * vPosition).xyz;
+    N = normalize((modelViewMatrix * vec4(vNormal, 0.0)).xyz);
+    L = normalize(lightPosition.xyz - pos);
+    E = normalize(-pos);
+    color = vColor;
+    gl_Position = modelViewMatrix * vPosition;
+}
+
 </script>
 
 <script id="fragment-shader" type="x-shader/x-fragment">
-    #version 300 es
-    precision mediump float;
-    in vec4 fColor;
-    out vec4 fragColor;
-    void main(){
-        fragColor = fColor;
-    }
+#version 300 es
+precision highp float;
+
+in vec3 N, L, E;
+in vec4 color;
+out vec4 fColor;
+
+uniform vec4 lightAmbient, lightDiffuse, lightSpecular;
+uniform vec4 materialAmbient, materialDiffuse, materialSpecular;
+uniform float shininess;
+
+void main() {
+    vec3 H = normalize(L + E);
+    vec4 ambient = lightAmbient * materialAmbient;
+    float Kd = max(dot(N, L), 0.0);
+    vec4 diffuse = Kd * lightDiffuse * materialDiffuse;
+    float Ks = pow(max(dot(N, H), 0.0), shininess);
+    vec4 specular = Ks * lightSpecular * materialSpecular;
+    if(dot(N, L) < 0.0) specular = vec4(0.0);
+    fColor = ambient + diffuse + specular;
+    fColor.a = 1.0;
+}
 </script>
 
 <div class="controls-container">
