@@ -477,8 +477,6 @@ function moveLeft(){ translateX -= 0.1; render(); }
 function moveRight(){ translateX += 0.1; render(); }
 function moveUp(){ translateY += 0.1; render(); }
 function moveDown(){ translateY -= 0.1; render(); }
-function moveForward(){ translateZ += 0.3; render(); }
-function moveBackward(){ translateZ -= 0.3; render(); }
 function resetPosition(){ 
   translateX = 0; 
   translateY = 0; 
