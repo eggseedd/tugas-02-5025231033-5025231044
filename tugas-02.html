@@ -311,6 +311,16 @@
     .translation-btn:hover {
         background-color: #2980b9;
     }
+
+    .task-table {
+    width: 80%;          /* Atur lebar sesuai kebutuhan */
+    margin: 0 auto;      /* Center horizontal */
+    border-collapse: collapse;
+    text-align: center;  /* Center teks di dalam sel */
+    }
+    .task-table th, .task-table td {
+        padding: 8px;
+    }
 </style>
 </head>
 
@@ -449,6 +459,29 @@ void main() {
         <div class="button-container">
             <button onclick="resetAll()" style="background-color: #e74c3c;">Reset Semua (Posisi + Rotasi + Pintu)</button>
         </div>
+    </div>
+    <div class="task-table-container">
+        <h2>Pembagian Tugas</h2>
+        <table class="task-table" border="1" cellpadding="8" cellspacing="0">
+            <tr>
+                <th>No</th>
+                <th>NRP</th>
+                <th>Nama</th>
+                <th>Jobdesk</th>
+            </tr>
+            <tr>
+                <td>1</td>
+                <td>5025231033</td>
+                <td>Raditya Yusuf A.</td>
+                <td>Modelling, lighting, dan pembuatan objek.</td>
+            </tr>
+            <tr>
+                <td>2</td>
+                <td>5025231044</td>
+                <td>Rahman Azkarafi P.</td>
+                <td>Fitur interaktif dan animasi objek.</td>
+            </tr>
+        </table>
     </div>
 </div>
 
