@@ -7,7 +7,7 @@ let normalsArray = [];
 
 let shaderProgram;
 
-// animasi defaulty
+// animasi default
 let isAnimating = true;
 let animationId = null;
 let rotationSpeed = 0.2; 
@@ -151,7 +151,7 @@ let rightDoorAngle = 0;
 let wallStart, frameStart, leftDoorStart, rightDoorStart;
 let wallCount, frameCount, leftDoorCount, rightDoorCount;
 
-// NEW: Translation variables
+// Translation variables
 let translateX = 0;
 let translateY = 0;
 let translateZ = 0;
@@ -160,7 +160,6 @@ let uLightPositionLoc, uLightAmbientLoc, uLightDiffuseLoc, uLightSpecularLoc, uS
 let uMaterialAmbientLoc, uMaterialDiffuseLoc, uMaterialSpecularLoc;
 
 function buildWallAndDoor() {
-  // compute starts and counts dynamically
   const startWall = pointsArray.length;
 
   // Left wall (white)
@@ -182,7 +181,6 @@ function buildWallAndDoor() {
   wallStart = startWall;
   wallCount = pointsArray.length - startWall;
 
-  // --- Frame ---
   const startFrame = pointsArray.length;
   
   quad(3, 11, 10, 8); // left door frame
@@ -200,24 +198,22 @@ function buildWallAndDoor() {
   frameStart = startFrame;
   frameCount = pointsArray.length - startFrame;
 
-  // --- Left Door ---
   const startLeftDoor = pointsArray.length;
   
   // Left door front (cyan)
   quad(11, 19, 18, 20); // left door
   quad(19, 48, 47, 18);
-  quad(18, 47, 49, 20);
+  quad(46, 11, 20, 49);
   quad(48, 46, 49, 47);
 
   leftDoorStart = startLeftDoor;
   leftDoorCount = pointsArray.length - startLeftDoor;
 
-  // --- Right Door ---
   const startRightDoor = pointsArray.length;
   
   quad(22, 13, 23, 21); // right door
   quad(52, 22, 21, 51);
-  quad(51, 21, 23, 53);
+  quad(13, 50, 53, 23);
   quad(50, 52, 51, 53);
 
   rightDoorStart = startRightDoor;
@@ -229,10 +225,9 @@ function createNode(transform, render, sibling, child){
 }
 
 function initNodes(){
-  // NEW: Combine translation and rotation for wall
   const wallTransform = mult(
-    translate(translateX, translateY, translateZ),
-    rotateY(theta)
+      translate(translateX, translateY, translateZ),
+      rotateY(theta)
   );
   
   const frameTransform = mult(
@@ -242,7 +237,7 @@ function initNodes(){
 
   // Left door rotation (local transformation)
 const leftDoorTransform = mult(
-  translate(0.08 * (leftDoorAngle / 90), 0, -0.06 * (leftDoorAngle / 90)), // right shift grows as door opens
+  translate(0.08 * (leftDoorAngle / 90), 0, -0.06 * (leftDoorAngle / 90)),
   mult(
     translate(-0.42, 0, 0.11),
     mult(
@@ -254,9 +249,9 @@ const leftDoorTransform = mult(
   
   // Right door rotation (local transformation)  
 const rightDoorTransform = mult(
-  translate(0.08 * (rightDoorAngle / 90), 0, 0.06 * (rightDoorAngle / 90)), // shift left as it opens
+  translate(0.08 * (rightDoorAngle / 90), 0, 0.06 * (rightDoorAngle / 90)),
   mult(
-    translate(0.42, 0, 0.11),                     // hinge position
+    translate(0.42, 0, 0.11),
     mult(
       rotateY(rightDoorAngle),
       translate(-0.42, 0, -0.08)
@@ -270,7 +265,6 @@ const rightDoorTransform = mult(
   leftDoorNode = createNode(leftDoorTransform, renderLeftDoor, null, null);
   rightDoorNode = createNode(rightDoorTransform, renderRightDoor, null, null);
 
-  // Hierarchy: Wall -> Frame -> LeftDoor & RightDoor (siblings)
   wallNode.child = frameNode;
   frameNode.child = leftDoorNode;
   leftDoorNode.sibling = rightDoorNode;
@@ -290,7 +284,7 @@ function traverse(node){
 function animate() {
     if (!isAnimating) return;
     
-    // Rotasi tembok terus menerus
+    // Rotasi tembok
     theta += rotationSpeed;
     if (theta >= 360) theta -= 360;
     
@@ -351,7 +345,6 @@ function resetAnimation() {
     document.getElementById('toggleAnimation').style.backgroundColor = '#e74c3c';
 }
 function setMaterial(ambient, diffuse, specular) {
-  // use cached uniform locations
   gl.uniform4fv(uMaterialAmbientLoc, flatten(ambient));
   gl.uniform4fv(uMaterialDiffuseLoc, flatten(diffuse));
   gl.uniform4fv(uMaterialSpecularLoc, flatten(specular));
@@ -379,7 +372,6 @@ window.onload = function init(){
   gl = canvas.getContext("webgl2");
   if(!gl) { alert("WebGL 2.0 isn't available"); return; }
 
-  // Ensure arrays are empty before building geometry (defensive)
   pointsArray.length = 0;
   colorsArray.length = 0;
   normalsArray.length = 0;
@@ -391,6 +383,10 @@ window.onload = function init(){
   gl.enable(gl.DEPTH_TEST);
   gl.depthFunc(gl.LEQUAL);
   gl.clearDepth(1.0);
+
+  // gl.enable(gl.CULL_FACE);
+  // gl.frontFace(gl.CCW);
+  // gl.cullFace(gl.BACK);
 
   const program = initShaders(gl, "vertex-shader", "fragment-shader");
   shaderProgram = program;
@@ -431,7 +427,7 @@ window.onload = function init(){
   uMaterialDiffuseLoc = gl.getUniformLocation(program, "materialDiffuse");
   uMaterialSpecularLoc = gl.getUniformLocation(program, "materialSpecular");
 
-  // set light uniforms (once)
+  // set light uniforms
   gl.uniform4fv(uLightPositionLoc, flatten(lightPosition));
   gl.uniform4fv(uLightAmbientLoc, flatten(lightAmbient));
   gl.uniform4fv(uLightDiffuseLoc, flatten(lightDiffuse));
@@ -451,6 +447,20 @@ function render(){
   gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
   initNodes();
   modelViewMatrix = mat4();
+  // Camera setup
+  // const eye = vec3(0.0, 0.0, 2.0);       // camera position
+  // const at  = vec3(0.0, 0.0, 0.0);       // look-at target
+  // const up  = vec3(0.0, 1.0, 0.0);       // up direction
+
+  // const viewMatrix = lookAt(eye, at, up);
+  // const projectionMatrix = perspective(45, canvas.width / canvas.height, 0.1, 10.0);
+
+  // // Model transform base (used in hierarchical traversal)
+  // modelViewMatrix = mult(viewMatrix, mat4());
+
+  // gl.uniformMatrix4fv(gl.getUniformLocation(shaderProgram, "projectionMatrix"), false, flatten(projectionMatrix));
+  // gl.uniformMatrix4fv(modelViewMatrixLoc, false, flatten(modelViewMatrix));
+
   traverse(wallNode);
       if (isAnimating && !animationId) {
         animationId = requestAnimationFrame(animate);
@@ -462,13 +472,13 @@ function rotateLeft(){ theta -= 10; render(); }
 function rotateRight(){ theta += 10; render(); }
 function resetRotation(){ theta = 0; render(); }
 
-// NEW: Translation controls
+// Translation controls
 function moveLeft(){ translateX -= 0.1; render(); }
 function moveRight(){ translateX += 0.1; render(); }
 function moveUp(){ translateY += 0.1; render(); }
 function moveDown(){ translateY -= 0.1; render(); }
-function moveForward(){ translateZ += 0.1; render(); }
-function moveBackward(){ translateZ -= 0.1; render(); }
+function moveForward(){ translateZ += 0.3; render(); }
+function moveBackward(){ translateZ -= 0.3; render(); }
 function resetPosition(){ 
   translateX = 0; 
   translateY = 0; 
@@ -476,7 +486,7 @@ function resetPosition(){
   render(); 
 }
 
-// Door animation controls - pintu membuka ke dalam
+// Door animation controls - pintu membuka ke luar
 function openLeftDoor(){ 
   leftDoorAngle = 90;
   render(); 
@@ -503,7 +513,7 @@ function resetDoors(){
   render(); 
 }
 
-// NEW: Reset everything
+// Reset everything
 function resetAll(){
   theta = 0;
   leftDoorAngle = 0;

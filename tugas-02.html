@@ -279,6 +279,38 @@
             max-width: 300px;
         }
     }
+
+    .axis-controls {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    }
+
+    .axis-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+
+    .translation-controls {
+        display: flex;
+        width: 100%;
+        gap: 10px;
+    }
+
+    .translation-btn {
+        flex: 1; /* each button takes equal space */
+        padding: 8px 0;
+        background-color: #3498db;
+        color: white;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+    }
+
+    .translation-btn:hover {
+        background-color: #2980b9;
+    }
 </style>
 </head>
 
@@ -286,20 +318,21 @@
     <h1>Raditya Yusuf (5025231033) dan Rahman Azkarafi (5025231044)</h1>
     
     <div class="photo-container">
-        <h2>Foto dan Video Objek Asli</h2>
+        <h2>Video Objek Asli</h2>
         <div class="photo-description">
-            Berikut adalah foto dan video objek asli yang akan digambarkan dalam aplikasi grafika ini.
+            Berikut adalah video objek asli yang akan digambarkan dalam aplikasi grafika ini.
             Objek ini berada di lingkungan Teknik Informatika.
         </div>
         
         <div class="photo-wrapper">
             <div class="photo-item">
-                <img id="object-photo" src="public/20250922_160644.jpg" alt="Foto objek asli">
-                <img id="object-photo2" src="public/20250922_160708.jpg" alt="Foto objek asli">
-                <div class="photo-caption">Foto objek asli di lingkungan Teknik Informatika</div>
+                <video id="object-video1" src="public/WhatsApp Video 2025-10-27 at 22.19.16_906ee8d5.mp4" autoplay loop muted playsinline></video>
+                <video id="object-video2" src="public/WhatsApp Video 2025-10-27 at 22.19.18_848ada95.mp4" autoplay loop muted playsinline></video>
+                <div class="photo-caption">Video objek asli di lingkungan Teknik Informatika</div>
             </div>
         </div>
     </div>
+
     
     <div class="canvas-container">
         <canvas id="gl-canvas" width="840" height="840">
@@ -311,7 +344,6 @@
 #version 300 es
 in vec4 vPosition;
 in vec3 vNormal;
-in vec4 vColor;
 
 out vec3 N, L, E;
 out vec4 color;
@@ -324,10 +356,8 @@ void main() {
     N = normalize((modelViewMatrix * vec4(vNormal, 0.0)).xyz);
     L = normalize(lightPosition.xyz - pos);
     E = normalize(-pos);
-    color = vColor;
     gl_Position = modelViewMatrix * vPosition;
 }
-
 </script>
 
 <script id="fragment-shader" type="x-shader/x-fragment">
@@ -373,7 +403,7 @@ void main() {
         <div class="button-container">
             <button onclick="rotateLeft()">Rotate Left</button>
             <button onclick="rotateRight()">Rotate Right</button>
-            <button onclick="resetRotation()">Reset Rotation</button>
+            <button onclick="resetRotation()" style="background-color: #e74c3c;">Reset Rotation</button>
         </div>
     </div>
     
@@ -403,12 +433,12 @@ void main() {
             </div>
         </div>
         <div class="button-container" style="margin-top: 15px;">
-            <button onclick="resetPosition()">Reset Posisi</button>
+            <button onclick="resetPosition()" style="background-color: #e74c3c;">Reset Posisi</button>
         </div>
     </div>
     
     <div class="control-group">
-        <h3>Animasi Pintu</h3>
+        <h3>Kontrol Pintu</h3>
         <div class="control-row">
             <div class="control-label">Buka/Tutup Pintu:</div>
             <div class="door-controls">
@@ -416,7 +446,7 @@ void main() {
                 <button class="door-btn" onclick="closeLeftDoor()">Tutup Kiri</button>
                 <button class="door-btn" onclick="openRightDoor()">Buka Kanan</button>
                 <button class="door-btn" onclick="closeRightDoor()">Tutup Kanan</button>
-                <button class="door-btn" onclick="resetDoors()">Reset Pintu</button>
+                <button class="door-btn" onclick="resetDoors()" style="background-color: #e74c3c;">Reset Pintu</button>
             </div>
         </div>
     </div>
